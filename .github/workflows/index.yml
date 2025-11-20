@@ -1,0 +1,32 @@
+name: Generar Index
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  generate-index:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+        
+    - name: Generate index
+      run: |
+        chmod +x index.sh
+        ./index.sh
+
+    - name: Commit y push
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+
+        git add index.md
+
+        if git diff --cached --quiet; then
+          echo "No hay cambios, no se hace commit."
+          exit 0
+        fi
+
+        git commit -m "Actualizar indice"
+        git push
